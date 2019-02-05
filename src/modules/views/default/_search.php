@@ -38,6 +38,21 @@ if (isset(Yii::$app->params['datePicker-language'])) {
         ],
     ]) ?>
 
+	<?= $form->field($model, 'to_date')->widget(DatePicker::class, [
+		'language' => $language,
+		'clientOptions' => [
+			'autoclose' => true,
+			'todayHighlight' => true,
+			'format' => 'dd.mm.yyyy',
+			'endDate' => date('d.m.Y'),
+			'clearBtn' => true,
+		],
+	]) ?>
+
+	<?= Html::submitButton(Yii::t('lav45/logger', 'Show'), [
+		'class' => 'btn btn-default',
+	]) ?>
+
     <?= Html::a(Yii::t('lav45/logger', 'Reset'), ['index'], [
         'class' => 'btn btn-default',
     ]) ?>
@@ -47,9 +62,12 @@ if (isset(Yii::$app->params['datePicker-language'])) {
 </div>
 
 <?php
+/*
 $this->registerJs(<<<JS
     $('#{$form->id}').on('change', function() {
         $(this).submit();
     })
 JS
 );
+*/
+?>
