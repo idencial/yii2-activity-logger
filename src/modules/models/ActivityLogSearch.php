@@ -38,6 +38,11 @@ class ActivityLogSearch extends Model
      * @var string
      */
     public $date;
+
+	/**
+	 * @var string
+	 */
+	public $to_date;
     /**
      * @var array
      */
@@ -57,7 +62,7 @@ class ActivityLogSearch extends Model
 
             [['env'], 'safe'],
 
-            [['date'], 'date', 'format' => 'dd.MM.yyyy'],
+            [['date', 'to_date'], 'date', 'format' => 'dd.MM.yyyy'],
         ];
     }
 
