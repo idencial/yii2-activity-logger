@@ -32,9 +32,9 @@ CSS
 
     <h2><?= Html::encode($this->title) ?></h2>
 
-    <?php Pjax::begin(); ?>
-
     <?= $this->render('_search', ['model' => $searchModel]); ?>
+
+	<?php Pjax::begin(); ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,

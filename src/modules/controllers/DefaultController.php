@@ -29,6 +29,13 @@ class DefaultController extends Controller
         $searchModel->setEntityMap($this->module->entityMap);
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
+		if (empty($searchModel->date)) {
+			$searchModel->date = date('d.m.Y');
+		}
+		if (empty($searchModel->to_date)) {
+			$searchModel->to_date = date('d.m.Y');
+		}
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

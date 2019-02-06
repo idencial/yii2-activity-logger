@@ -51,20 +51,34 @@ class ActivityLogSearch extends Model
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
-        return [
-            [['entityName'], 'in', 'range' => array_keys($this->getEntityMap())],
+	public function rules()
+	{
+		return [
+			[['date', 'to_date'], 'required'],
 
-            [['entityId'], 'safe'],
+			[['entityName'], 'in', 'range' => array_keys($this->getEntityMap())],
 
-            [['userId'], 'safe'],
+			[['entityId'], 'safe'],
 
-            [['env'], 'safe'],
+			[['userId'], 'safe'],
 
-            [['date', 'to_date'], 'date', 'format' => 'dd.MM.yyyy'],
-        ];
-    }
+			[['env'], 'safe'],
+
+			[['date', 'to_date'], 'date', 'format' => 'dd.MM.yyyy'],
+
+			['date', function() {
+				if (strtotime($this->date) > strtotime($this->to_date)) {
+					$this->addError('date', 'Дата начала не может быть больше даты окончания');
+				}
+			}],
+
+			['to_date', function() {
+				if (strtotime($this->to_date) < strtotime($this->date)) {
+					$this->addError('to_date', 'Дата окончания не может быть меньше даты начала');
+				}
+			}],
+		];
+	}
 
     /**
      * For beautiful links in the browser bar when filtering and searching
