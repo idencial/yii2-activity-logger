@@ -108,16 +108,26 @@ class ActivityLogSearch extends Model
             return $dataProvider;
         }
 
-        if (!empty($this->date)) {
-            $date = Yii::$app->getFormatter()
-                ->asTimestamp($this->date . ' 00:00:00 ' . Yii::$app->timeZone);
+		if (!empty($this->date)) {
+			$date = Yii::$app->getFormatter()
+				->asTimestamp($this->date . ' 00:00:00 ' . Yii::$app->timeZone);
 
-            $query
-                ->andFilterWhere(['and',
-                    ['>=', 'created_at', $date],
-                    ['<=', 'created_at', $date + 86400],
-                ]);
-        }
+			$query
+				->andFilterWhere(['and',
+					['>=', 'created_at', $date],
+					/*['<=', 'created_at', $date + 86400],*/
+				]);
+		}
+
+		if (!empty($this->to_date)) {
+			$date = Yii::$app->getFormatter()
+				->asTimestamp($this->to_date . ' 00:00:00 ' . Yii::$app->timeZone);
+
+			$query
+				->andFilterWhere(['and',
+					['<=', 'created_at', $date + 86400],
+				]);
+		}
 
         $query
             ->andFilterWhere(['entity_name' => $this->entityName])
