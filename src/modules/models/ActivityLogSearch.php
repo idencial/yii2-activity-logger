@@ -152,4 +152,16 @@ class ActivityLogSearch extends Model
         $data = array_keys($this->getEntityMap());
         return array_combine($data, $data);
     }
+
+	/**
+	 * @return array
+	 */
+	public function getUsersList() {
+		$users_model = ActivityLog::find()->select('user_id, user_name')->groupBy(['user_id'])->asArray()->all();
+		$users = [];
+		foreach ($users_model as $user) {
+			$users[$user['user_id']] = $user['user_name'];
+		}
+		return $users;
+	}
 }

@@ -27,6 +27,10 @@ if (isset(Yii::$app->params['datePicker-language'])) {
         'prompt' => 'Выберете раздел админки...',
     ]) ?>
 
+	<?= $form->field($model, 'userId')->dropDownList($model->getUsersList(), [
+		'prompt' => 'Выберете пользователя...',
+	]) ?>
+
     <?= $form->field($model, 'date')->widget(DatePicker::class, [
         'language' => $language,
         'clientOptions' => [

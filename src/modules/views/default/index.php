@@ -39,7 +39,7 @@ CSS
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'itemView' => '_item',
-        'layout' => "{items}\n{pager}",
+        /*'layout' => "{items}\n{pager}",*/
     ]) ?>
 
     <?php Pjax::end(); ?>
