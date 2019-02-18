@@ -41,4 +41,24 @@ class DefaultController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
+	public function actionReport()
+	{
+		ActivityLogViewModel::setModule($this->module);
+
+		$searchModel = new ActivityLogSearch();
+		$searchModel->setEntityMap($this->module->entityMap);
+		if (empty($searchModel->date)) {
+			$searchModel->date = date('d.m.Y');
+		}
+		if (empty($searchModel->to_date)) {
+			$searchModel->to_date = date('d.m.Y');
+		}
+		$report_data = $searchModel->searchReport(Yii::$app->getRequest()->getQueryParams());
+
+		return $this->render('report', [
+			'searchModel' => $searchModel,
+			'report_data' => $report_data,
+		]);
+	}
 }

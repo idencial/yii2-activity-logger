@@ -89,24 +89,24 @@ class ActivityLogSearch extends Model
         return '';
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     * @param array $params
-     * @return ActiveDataProvider
-     */
-    public function search($params)
-    {
-        $query = ActivityLogViewModel::find()
-            ->orderBy(['id' => SORT_DESC]);
+	/**
+	 * Creates data provider instance with search query applied
+	 * @param array $params
+	 * @return ActiveDataProvider
+	 */
+	public function search($params)
+	{
+		$query = ActivityLogViewModel::find()
+			->orderBy(['id' => SORT_DESC]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'sort' => false,
-        ]);
+		$dataProvider = new ActiveDataProvider([
+			'query' => $query,
+			'sort' => false,
+		]);
 
-        if (!($this->load($params, '') && $this->validate())) {
-            return $dataProvider;
-        }
+		if (!($this->load($params, '') && $this->validate())) {
+			return $dataProvider;
+		}
 
 		if (!empty($this->date)) {
 			$date = Yii::$app->getFormatter()
@@ -129,14 +129,83 @@ class ActivityLogSearch extends Model
 				]);
 		}
 
-        $query
-            ->andFilterWhere(['entity_name' => $this->entityName])
-            ->andFilterWhere(['entity_id' => $this->entityId])
-            ->andFilterWhere(['user_id' => $this->userId])
-            ->andFilterWhere(['env' => $this->env]);
+		$query
+			->andFilterWhere(['entity_name' => $this->entityName])
+			->andFilterWhere(['entity_id' => $this->entityId])
+			->andFilterWhere(['user_id' => $this->userId])
+			->andFilterWhere(['env' => $this->env]);
 
-        return $dataProvider;
-    }
+		return $dataProvider;
+	}
+
+
+	/**
+	 * @param array $params
+	 * @return array
+	 */
+	public function searchReport($params)
+	{
+		$report_data = [];
+		$query = (new Query())->from('activity_log')->select('entity_name')->groupBy('entity_name')->orderBy(['entity_name' => SORT_DESC]);
+
+		$this->load($params, '');
+
+		if (!empty($this->date)) {
+			$date = Yii::$app->getFormatter()
+				->asTimestamp($this->date . ' 00:00:00 ' . Yii::$app->timeZone);
+
+			$query
+				->andFilterWhere(['and',
+					['>=', 'created_at', $date],
+					/*['<=', 'created_at', $date + 86400],*/
+				]);
+		}
+		if (!empty($this->to_date)) {
+			$date = Yii::$app->getFormatter()
+				->asTimestamp($this->to_date . ' 00:00:00 ' . Yii::$app->timeZone);
+
+			$query
+				->andFilterWhere(['and',
+					['<=', 'created_at', $date + 86400],
+				]);
+		}
+		$query->andFilterWhere(['user_id' => $this->userId]);
+		$entities = $query->all();
+
+		foreach ($entities as $entity) {
+			$query = (new Query())->from('activity_log')->select('count(*) as count, action')->where(['entity_name' => $entity['entity_name']])->groupBy('action')->orderBy('action');
+			if (!empty($this->date)) {
+				$date = Yii::$app->getFormatter()
+					->asTimestamp($this->date . ' 00:00:00 ' . Yii::$app->timeZone);
+
+				$query
+					->andFilterWhere(['and',
+						['>=', 'created_at', $date],
+						/*['<=', 'created_at', $date + 86400],*/
+					]);
+			}
+			if (!empty($this->to_date)) {
+				$date = Yii::$app->getFormatter()
+					->asTimestamp($this->to_date . ' 00:00:00 ' . Yii::$app->timeZone);
+
+				$query
+					->andFilterWhere(['and',
+						['<=', 'created_at', $date + 86400],
+					]);
+			}
+			$query->andFilterWhere(['user_id' => $this->userId]);
+
+			$entity_actions = $query->all();
+			if (!empty($entity_actions)) {
+				$actions_info = [];
+				foreach ($entity_actions as $action_info) {
+					$actions_info[] = ['action' => $action_info['action'], 'count' => $action_info['count']];
+				}
+				$report_data[$entity['entity_name']] = $actions_info;
+			}
+		}
+		return $report_data;
+	}
 
     /**
      * @return array
