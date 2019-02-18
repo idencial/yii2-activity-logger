@@ -11,6 +11,7 @@ namespace lav45\activityLogger\modules\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 
 /**
  * Class ActivityLogSearch
