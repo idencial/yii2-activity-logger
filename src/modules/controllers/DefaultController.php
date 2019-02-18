@@ -30,7 +30,7 @@ class DefaultController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
 
 		if (empty($searchModel->date)) {
-			$searchModel->date = date('d.m.Y');
+			$searchModel->date = date('d.m.Y', strtotime("-1 week"));
 		}
 		if (empty($searchModel->to_date)) {
 			$searchModel->to_date = date('d.m.Y');
@@ -49,7 +49,7 @@ class DefaultController extends Controller
 		$searchModel = new ActivityLogSearch();
 		$searchModel->setEntityMap($this->module->entityMap);
 		if (empty($searchModel->date)) {
-			$searchModel->date = date('d.m.Y');
+			$searchModel->date = date('d.m.Y', strtotime("-1 week"));
 		}
 		if (empty($searchModel->to_date)) {
 			$searchModel->to_date = date('d.m.Y');

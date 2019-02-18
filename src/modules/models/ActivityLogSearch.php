@@ -105,7 +105,14 @@ class ActivityLogSearch extends Model
 			'sort' => false,
 		]);
 
-		if (!($this->load($params, '') && $this->validate())) {
+		if (empty($this->date)) {
+			$this->date = date('d.m.Y', strtotime("-1 week"));
+		}
+		if (empty($this->to_date)) {
+			$this->to_date = date('d.m.Y');
+		}
+		$this->load($params, '');
+		if (!$this->validate()) {
 			return $dataProvider;
 		}
 
